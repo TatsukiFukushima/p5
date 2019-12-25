@@ -13,15 +13,15 @@ function setup() {
 }
 
 function draw() {
-  fill(0, 100);
+  fill(0, 80);
   rect(0, 0, canvasX, canvasY);
   for (var i = 0; i < numLines; i++) {
     // 線をいい感じに光らせて描画
     strokeWeight(20);
-    stroke(255, 3);
+    stroke(255, 5);
     line(lines[i].x, 600, lines[i].x, 600 - lines[i].y);
     strokeWeight(12);
-    stroke(255, 8);
+    stroke(255, 10);
     line(lines[i].x, 600, lines[i].x, 600 - lines[i].y);
     strokeWeight(7);
     stroke(255, 25);
@@ -56,14 +56,14 @@ class Line {
       // 周囲を見回してみて場違いっぽい場所にいたら移動。
       // 他の線と距離が近すぎたら、離れる。
       if (distance <= 0) {
-        if (-20 < distance && lines[i].y < this.y) {
+        if (-15 < distance && lines[i].y < this.y) {
           this.v += 0.02;
         }
         if (-bestDistance < distance) {
           this.v -= 0.01;
         }
       } else if (0 < distance) {
-        if (distance < 20 && this.y < lines[i].y) {
+        if (distance < 15 && this.y < lines[i].y) {
           this.v -= 0.02;
         }
         if (distance < bestDistance) {
@@ -83,8 +83,10 @@ class Line {
     // 画面より外には行けない
     if (this.x < 0) {
       this.x = 0;
+      this.v = -0.1 * this.v;
     } else if (canvasX < this.x) {
       this.x = canvasX;
+      this.v = -0.1 * this.v;
     }
   }
 }
