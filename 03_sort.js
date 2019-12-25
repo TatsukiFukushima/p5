@@ -16,19 +16,22 @@ function draw() {
   fill(0, 80);
   rect(0, 0, canvasX, canvasY);
   for (var i = 0; i < numLines; i++) {
+    var lineX = lines[i].x
+    var lineY = 600 - lines[i].y
+
     // 線をいい感じに光らせて描画
-    strokeWeight(20);
+    strokeWeight(15);
     stroke(255, 5);
-    line(lines[i].x, 600, lines[i].x, 600 - lines[i].y);
-    strokeWeight(12);
-    stroke(255, 10);
-    line(lines[i].x, 600, lines[i].x, 600 - lines[i].y);
-    strokeWeight(7);
+    line(lineX, 600, lineX, lineY);
+    strokeWeight(10);
+    stroke(255, 8);
+    line(lineX, 600, lineX, lineY);
+    strokeWeight(5);
     stroke(255, 25);
-    line(lines[i].x, 600, lines[i].x, 600 - lines[i].y);
+    line(lineX, 600, lineX, lineY);
     strokeWeight(2);
     stroke(255);
-    line(lines[i].x, 600, lines[i].x, 600 - lines[i].y);
+    line(lineX, 600, lineX, lineY);
 
     // 速度を計算して移動
     lines[i].calcV();
@@ -54,33 +57,33 @@ class Line {
       var distance = this.x - lines[i].x
 
       // 周囲を見回してみて場違いっぽい場所にいたら移動。
-      // 他の線と距離が近すぎたら、離れる。
-      if (distance <= 0) {
-        if (-15 < distance && lines[i].y < this.y) {
+      if (Math.abs(distance) < 20) {
+        if (lines[i].y < this.y) {
           this.v += 0.02;
-        }
-        if (-bestDistance < distance) {
-          this.v -= 0.01;
-        }
-      } else if (0 < distance) {
-        if (distance < 15 && this.y < lines[i].y) {
+        } else {
           this.v -= 0.02;
         }
-        if (distance < bestDistance) {
-          this.v += 0.01;
+      }
+
+      // 他の線と距離が近すぎたら、離れる。
+      if (Math.abs(distance) < bestDistance) {
+        if (distance < 0) {
+          this.v -= 0.005;
+        } else if (0 < distance) {
+          this.v += 0.005;
         }
       }
     }
 
     // 摩擦を表現
-    this.v *= 0.98;
+    this.v *= 0.95;
   }
 
   // move 移動
   move() {
     this.x += this.v;
 
-    // 画面より外には行けない
+    // 画面より外には行けない。若干跳ね返る。
     if (this.x < 0) {
       this.x = 0;
       this.v = -0.1 * this.v;
