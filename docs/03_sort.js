@@ -3,6 +3,7 @@ const canvasY = 600;
 const numLines = 100;
 const bestDistance = canvasX / (numLines-1);
 var lines = new Array(numLines);
+var beforeMouseX = 0;
 
 function setup() {
   createCanvas(canvasX, canvasY);
@@ -17,7 +18,7 @@ function draw() {
   rect(0, 0, canvasX, canvasY);
   for (var i = 0; i < numLines; i++) {
     var lineX = lines[i].x
-    var lineY = 600 - lines[i].y
+    var lineY = lines[i].y
 
     // 線をいい感じに光らせて描画
     strokeWeight(15);
@@ -37,6 +38,7 @@ function draw() {
     lines[i].calcV();
     lines[i].move();
   }
+  diffuse(mouseX, mouseY, mouseX - beforeMouseX);
 }
 
 // Line
@@ -58,7 +60,7 @@ class Line {
 
       // 周囲を見回してみて場違いっぽい場所にいたら移動。
       if (Math.abs(distance) < 20) {
-        if (lines[i].y < this.y) {
+        if (this.y < lines[i].y) {
           this.v += 0.02;
         } else {
           this.v -= 0.02;
@@ -92,4 +94,19 @@ class Line {
       this.v = -0.1 * this.v;
     }
   }
+}
+
+// diffuse マウスで拡散させる
+function diffuse(x, y, v) {
+  if (0 < x && x < canvasX && 0 < y && y < canvasY){
+    for (i = 0; i < numLines; i++) {
+      var distance = lines[i].x - x;
+      if (Math.abs(distance) < 10 && lines[i].y < y) {
+        if ((distance < 0 && v < 0) || (0 < distance && 0 < v)) {
+          lines[i].v = v * 0.3;
+        }
+      }
+    }
+  }
+  beforeMouseX = x;
 }
